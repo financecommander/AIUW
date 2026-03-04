@@ -1,0 +1,55 @@
+# ─── Phase 1: Foundation & Data Engineering ────────────────────────────────────
+phase: 1
+description: "Foundation & Data Engineering"
+
+data:
+  historical_data_path: "data/historical_lending.parquet"
+  output_dir: "models/artifacts/"
+  target_column: "default_flag"
+  approved_flag_column: "approved_flag"
+  application_id_column: "application_id"
+
+  # Columns representing protected classes — NEVER used as model features
+  protected_class_columns:
+    - race
+    - national_origin
+    - color
+    - religion
+    - sex
+    - marital_status
+    - age
+    - familial_status
+    - disability_status
+
+  # Proxy correlation threshold: features correlated above this value are flagged
+  proxy_correlation_threshold: 0.4
+
+  # Minimum p-value threshold for statistical significance
+  proxy_significance_level: 0.05
+
+reject_inference:
+  method: "iterative_reclassification"  # iterative_reclassification | fuzzy_augmentation | both
+  # Iterative reclassification settings
+  iterative:
+    max_iterations: 10
+    convergence_threshold: 0.001
+    cutoff_percentile: 30          # Percentile below which rejects are classified as defaults
+  # Fuzzy augmentation settings
+  fuzzy:
+    default_weight: 1.0            # Weight multiplier for the "default" copy of each reject
+    non_default_weight: 1.0        # Weight multiplier for the "non-default" copy of each reject
+
+baseline_metrics:
+  legacy_score_column: "legacy_score"
+  cv_folds: 5
+  random_seed: 42
+  # PSI bin count for population stability index
+  psi_bins: 10
+  # KS/AUC thresholds for acceptable performance
+  min_ks: 0.20
+  min_auc: 0.65
+
+mlflow:
+  experiment_name: "ai-underwriting-phase1"
+  run_name: "phase1-baseline"
+  log_artifacts: true

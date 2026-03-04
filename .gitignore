@@ -1,0 +1,41 @@
+# Build artifacts and caches
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment config
+.env
+
+# Data files (may be large)
+data/*.parquet
+data/*.csv
+
+# Model artifacts (managed by MLflow)
+models/artifacts/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# IDE settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Test / coverage output
+.coverage
+htmlcov/
+.pytest_cache/
