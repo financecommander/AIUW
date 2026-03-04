@@ -1,0 +1,33 @@
+# Core ML / Data Processing
+pandas>=2.2.0
+polars>=0.20.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+lightgbm>=4.3.0
+shap>=0.44.0
+
+# Serving / API
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+tritonclient[all]>=2.42.0
+
+# Experiment Tracking / Pipeline Orchestration
+mlflow>=2.12.0
+apache-airflow>=2.9.0
+
+# Observability
+prometheus-client>=0.20.0
+
+# Storage / Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+boto3>=1.34.0
+
+# Configuration
+pyyaml>=6.0.1
+python-dotenv>=1.0.1
+
+# Statistical Analysis
+scipy>=1.13.0
+statsmodels>=0.14.0
