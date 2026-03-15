@@ -2,8 +2,11 @@ xgboost:
   max_depth: 6
   learning_rate: 0.1
   n_estimators: 100
+  objective: binary:logistic
 lightgbm:
   max_depth: 6
   learning_rate: 0.1
-  num_iterations: 100
-champion_weight: 0.7
+  n_estimators: 100
+  objective: binary
+ensemble:
+  champion_weight: 0.6
