@@ -1,30 +1,29 @@
-from typing import Dict, Any, Tuple
-import xgboost as xgb
-import lightgbm as lgb
-import numpy as np
-from sklearn.base import BaseEstimator, ClassifierMixin
+from typing import List, Dict, Any
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.preprocessing import StandardScaler
 
-class EnsembleModel(BaseEstimator, ClassifierMixin):
-    def __init__(self, xgb_params: Dict[str, Any], lgb_params: Dict[str, Any], champion_weight: float = 0.6):
-        self.champion_weight = champion_weight
-        self.xgb_model = xgb.XGBClassifier(**xgb_params)
-        self.lgb_model = lgb.LGBMClassifier(**lgb_params)
-        self.is_champion_xgb = True  # Default champion
+class EnsembleModel:
+    def __init__(self):
+        self.rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+        self.xgb_model = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+        self.scaler = StandardScaler()
+        self.is_fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'EnsembleModel':
-        self.xgb_model.fit(X, y)
-        self.lgb_model.fit(X, y)
-        return self
+    def fit(self, X: List[List[float]], y: List[int]) -> None:
+        X_scaled = self.scaler.fit_transform(X)
+        self.rf_model.fit(X_scaled, y)
+        self.xgb_model.fit(X_scaled, y)
+        self.is_fitted = True
 
-    def predict_proba(self, X: np.ndarray) -> np.ndarray:
-        xgb_probs = self.xgb_model.predict_proba(X)[:, 1]
-        lgb_probs = self.lgb_model.predict_proba(X)[:, 1]
-        champion = xgb_probs if self.is_champion_xgb else lgb_probs
-        challenger = lgb_probs if self.is_champion_xgb else xgb_probs
-        return self.champion_weight * champion + (1 - self.champion_weight) * challenger
+    def predict_proba(self, X: List[List[float]]) -> List[float]:
+        if not self.is_fitted:
+            raise ValueError("Model not fitted yet")
+        X_scaled = self.scaler.transform(X)
+        rf_probs = self.rf_model.predict_proba(X_scaled)[:, 1]
+        xgb_probs = self.xgb_model.predict_proba(X_scaled)[:, 1]
+        return [0.5 * rf + 0.5 * xgb for rf, xgb in zip(rf_probs, xgb_probs)]
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        return (self.predict_proba(X) > 0.5).astype(int)
-
-    def set_champion(self, is_xgb_champion: bool) -> None:
-        self.is_champion_xgb = is_xgb_champion
+    def predict(self, X: List[List[float]]) -> List[int]:
+        probs = self.predict_proba(X)
+        return [1 if p >= 0.5 else 0 for p in probs]
