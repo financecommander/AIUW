@@ -1,7 +1,9 @@
-model_name: ensemble
-xgboost_params:
+xgboost:
   max_depth: 6
   learning_rate: 0.1
-lightgbm_params:
-  num_leaves: 31
+  n_estimators: 100
+lightgbm:
+  max_depth: 6
   learning_rate: 0.1
+  num_iterations: 100
+champion_weight: 0.7
