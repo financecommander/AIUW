@@ -1,15 +1,7 @@
-xgboost:
+model_name: ensemble
+xgboost_params:
   max_depth: 6
   learning_rate: 0.1
-  n_estimators: 100
-  objective: binary:logistic
-lightgbm:
-  max_depth: 6
+lightgbm_params:
+  num_leaves: 31
   learning_rate: 0.1
-  n_estimators: 100
-  objective: binary
-ensemble:
-  champion_weight: 0.7
-training:
-  cv_folds: 5
-  early_stopping_rounds: 10
